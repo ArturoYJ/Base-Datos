@@ -1,0 +1,8 @@
+# ============================================
+# ARCHIVOS SOLO PARA INSTRUCTOR
+# ============================================
+# NO COMPARTIR con estudiantes
+
+# Archivos de soluciones para instructor
+INSTRUCTOR_*.md
+INSTRUCTOR_*.sql
