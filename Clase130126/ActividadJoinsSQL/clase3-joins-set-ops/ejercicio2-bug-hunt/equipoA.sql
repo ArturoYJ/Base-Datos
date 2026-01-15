@@ -1,4 +1,4 @@
--- ============================================
+ - -- ============================================
 -- EJERCICIO 2: BUG HUNT — EQUIPO A
 -- ============================================
 -- Ruta de JOIN: categorias → productos
@@ -29,7 +29,8 @@ WHERE p.precio > 0;
 -- QUERY CORREGIDA:
 --SELECT c.nombre AS categoria, p.nombre AS producto
 --FROM categorias c
---LEFT JOIN productos p ON c.id = p.categoria_id AND p.precio > 0
+--LEFT JOIN productos p ON c.id = p.categoria_id 
+--AND p.precio > 0
 
 
 -- ============================================
