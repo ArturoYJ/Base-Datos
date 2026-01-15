@@ -24,10 +24,12 @@ WHERE p.precio > 0;
 -- ¿Aparece la categoría "Libros"? _____
 -- 
 -- BUG ENCONTRADO:
--- [Escribe aquí qué está mal]
+-- [Porque el where filtra las filas donde producto precio es null, eliminando  categorías previamente filtradas sin productos]
 --
 -- QUERY CORREGIDA:
--- [Escribe tu corrección aquí]
+--SELECT c.nombre AS categoria, p.nombre AS producto
+--FROM categorias c
+--LEFT JOIN productos p ON c.id = p.categoria_id AND p.precio > 0
 
 
 -- ============================================
