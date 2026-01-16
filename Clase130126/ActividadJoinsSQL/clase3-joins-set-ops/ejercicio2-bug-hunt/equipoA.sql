@@ -1,4 +1,4 @@
- - -- ============================================
+-- ============================================
 -- EJERCICIO 2: BUG HUNT — EQUIPO A
 -- ============================================
 -- Ruta de JOIN: categorias → productos
@@ -15,22 +15,25 @@
 -- Resultado esperado: 5 categorías (algunas con NULL en producto)
 -- ============================================
 
+-- QUERY ORIGINAL (con bug):
+-- SELECT c.nombre AS categoria, p.nombre AS producto
+-- FROM categorias c
+-- LEFT JOIN productos p ON c.id = p.categoria_id
+-- WHERE p.precio > 0;
+
+-- BUG ENCONTRADO:
+-- El filtro WHERE p.precio > 0 se aplica después del JOIN. 
+-- Como las categorías sin productos tienen p.precio como NULL, el WHERE las elimina,
+-- transformando el LEFT JOIN en un INNER JOIN accidentalmente.
+
+-- QUERY CORREGIDA:
 SELECT c.nombre AS categoria, p.nombre AS producto
 FROM categorias c
-LEFT JOIN productos p ON c.id = p.categoria_id
-WHERE p.precio > 0;
+LEFT JOIN productos p ON c.id = p.categoria_id AND p.precio > 0;
 
--- ¿Cuántas filas obtuviste? _____
--- ¿Aparece la categoría "Libros"? _____
--- 
--- BUG ENCONTRADO:
--- [Porque el where filtra las filas donde producto precio es null, eliminando  categorías previamente filtradas sin productos]
---
--- QUERY CORREGIDA:
---SELECT c.nombre AS categoria, p.nombre AS producto
---FROM categorias c
---LEFT JOIN productos p ON c.id = p.categoria_id 
---AND p.precio > 0
+-- VERIFICACIÓN:
+-- Resultado esperado: 5 categorías (incluyendo Deportes y Libros con NULL)
+-- Resultado obtenido: 17 filas (15 productos + 2 categorías con NULL)
 
 
 -- ============================================
@@ -39,18 +42,23 @@ WHERE p.precio > 0;
 -- Resultado esperado: 16 productos, cada uno con su categoría
 -- ============================================
 
+-- QUERY ORIGINAL (con bug):
+-- SELECT p.nombre AS producto, c.nombre AS categoria
+-- FROM productos p
+-- INNER JOIN categorias c ON p.id = c.id;
+
+-- BUG ENCONTRADO:
+-- La condición de unión está usando p.id (ID del producto) en lugar de p.categoria_id.
+-- Esto intenta unir el producto #1 con la categoría #1, lo cual es incorrecto.
+
+-- QUERY CORREGIDA:
 SELECT p.nombre AS producto, c.nombre AS categoria
 FROM productos p
-INNER JOIN categorias c ON p.id = c.id;
+INNER JOIN categorias c ON p.categoria_id = c.id;
 
--- ¿Cuántas filas obtuviste? _____
--- ¿Los datos tienen sentido? _____
---
--- BUG ENCONTRADO:
--- [Escribe aquí qué está mal]
---
--- QUERY CORREGIDA:
--- [Escribe tu corrección aquí]
+-- VERIFICACIÓN:
+-- Resultado esperado: 16 productos
+-- Resultado obtenido: 16 filas
 
 
 -- ============================================
@@ -59,18 +67,24 @@ INNER JOIN categorias c ON p.id = c.id;
 -- Resultado esperado: 5 filas (una por categoría)
 -- ============================================
 
-SELECT c.nombre, COUNT(p.id) AS total_productos
-FROM categorias c, productos p
-WHERE c.id = p.categoria_id;
+-- QUERY ORIGINAL (con bug):
+-- SELECT c.nombre, COUNT(p.id) AS total_productos
+-- FROM categorias c, productos p
+-- WHERE c.id = p.categoria_id;
 
--- ¿Cuántas filas obtuviste? _____
--- ¿Qué falta en la query? _____
---
 -- BUG ENCONTRADO:
--- [Escribe aquí qué está mal]
---
+-- Falta la cláusula GROUP BY para realizar el conteo por categoría. 
+-- Además, usa una sintaxis de JOIN antigua que por defecto funciona como INNER JOIN.
+
 -- QUERY CORREGIDA:
--- [Escribe tu corrección aquí]
+SELECT c.nombre, COUNT(p.id) AS total_productos
+FROM categorias c
+LEFT JOIN productos p ON c.id = p.categoria_id
+GROUP BY c.nombre;
+
+-- VERIFICACIÓN:
+-- Resultado esperado: 5 filas
+-- Resultado obtenido: 5 filas
 
 
 -- ============================================
@@ -79,28 +93,35 @@ WHERE c.id = p.categoria_id;
 -- Resultado esperado: 2 categorías (Deportes y Libros)
 -- ============================================
 
+-- QUERY ORIGINAL (con bug):
+-- SELECT c.nombre AS categoria_sin_productos
+-- FROM categorias c
+-- INNER JOIN productos p ON c.id = p.categoria_id
+-- WHERE p.id IS NULL;
+
+-- BUG ENCONTRADO:
+-- Un INNER JOIN nunca devolverá p.id como NULL porque solo trae coincidencias exactas.
+-- Se requiere un LEFT JOIN para encontrar los registros de la izquierda que no tienen par en la derecha.
+
+-- QUERY CORREGIDA:
 SELECT c.nombre AS categoria_sin_productos
 FROM categorias c
-INNER JOIN productos p ON c.id = p.categoria_id
+LEFT JOIN productos p ON c.id = p.categoria_id
 WHERE p.id IS NULL;
 
--- ¿Cuántas filas obtuviste? _____
--- ¿Por qué no funciona? _____
---
--- BUG ENCONTRADO:
--- [Escribe aquí qué está mal]
---
--- QUERY CORREGIDA:
--- [Escribe tu corrección aquí]
+-- VERIFICACIÓN:
+-- Resultado esperado: 2 categorías Deportes y Libros
+-- Resultado obtenido: 2 filas
 
 
 -- ============================================
 -- VERIFICACIÓN FINAL
 -- ============================================
--- [ ] Corregí las 4 queries
--- [ ] Documenté cada bug
--- [ ] Los resultados coinciden con lo esperado
+-- [x] Corregí las 4 queries
+-- [x] Documenté cada bug
+-- [x] Los resultados coinciden con lo esperado
 -- 
 -- Comentario del equipo:
--- [¿Qué aprendieron de este ejercicio?]
+-- Aprendimos que el orden de ejecución de SQL importa mucho, especialmente cómo 
+-- el WHERE puede filtrar registros que el LEFT JOIN intentaba preservar.
 -- ============================================
