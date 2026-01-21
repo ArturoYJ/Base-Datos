@@ -18,10 +18,12 @@ Tabla mini:
 | B       | 105      | 120   | 2026-01-05 |
 | A       | 106      | 60    | 2026-01-06 |
 
+Un analista de negocio necesita generar un reporte de clientes que muestre la frecuencia de compra o el monto total gastado. Además, quiere filtrar solo a los clientes que cumplan cierta condición (por ejemplo: clientes con 2+ órdenes, o con compras totales mayores a $200). Analiza la tabla y responde las preguntas considerando cómo construirías esta consulta SQL.
+
 Preguntas:
-1. Que se agrupa?
-2. Que metrica se calcula?
-3. WHERE o HAVING y por que?
+1. Qué se agrupa?
+2. Qué métrica se calcula?
+3. WHERE o HAVING y por qué?
 
 ## Seccion C - Laboratorio (35 min)
 Cada equipo trabaja en su archivo:
